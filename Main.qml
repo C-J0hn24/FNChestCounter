@@ -56,31 +56,34 @@ ApplicationWindow {
 
             border.width: 1;
             border.color: hovered ?"#94CBFF" : "#6D31C0";
+            Behavior on border.color{
+                ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+            }
 
             gradient: Gradient{
                 GradientStop{position:0.0; color: hovered ?   "#274858" : "#2F1135";
                     Behavior on color{
-                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
                     }
                 }
                 GradientStop{position:0.25; color: hovered ?  "#0C1422" : "#180C22" ;
                     Behavior on color{
-                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
                     }
                 }
                 GradientStop{position:0.50; color: hovered ?  "#0A161B" : "#0F0A1B" ;
                     Behavior on color{
-                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
                     }
                 }
                 GradientStop{position:0.85; color: hovered ? "#111F2E": "#16112E" ;
                     Behavior on color{
-                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
                     }
                 }
                 GradientStop{position:1.0; color: hovered ?  "#152C38" : "#191538" ;
                     Behavior on color{
-                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
                     }
                 }
             }
@@ -279,16 +282,31 @@ ApplicationWindow {
 
                     Rectangle{id: rec3_2; width:150; height: 40; visible:true; radius:10;
                         border.width: 1;
-                        border.color: "#6D31C0"
+                        border.color: keyRow.isListening ?"#94CBFF" : "#6D31C0";
+                        Behavior on border.color{
+                            ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                        }
 
                         gradient: Gradient{
                             orientation: Gradient.Horizontal
-                            GradientStop{position:0.0; color:"#110A17";}
-                            GradientStop{position:0.60; color:"#24102E";}
-                            GradientStop{position:1.0; color:"#4C1C60";}
+                            GradientStop{position:0.0; color:keyRow.isListening ? "#215D77":"#110A17";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
+                            GradientStop{position:0.60; color:keyRow.isListening ? "#10262E":"#24102E";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
+                            GradientStop{position:1.0; color:keyRow.isListening ? "#0A1017":"#4C1C60";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
                         }
 
-                        RegText{font.family:fntL0.name; text:keyRow.isListening? "Capturing.." : "Key rn : "+chest.key_name; font.pixelSize: 12; opacity: .75;}
+                        RegText{font.family:fntL0.name; text:keyRow.isListening? "Capturing..." : "Key rn : "+chest.key_name; font.pixelSize: 12; opacity: .75;}
                         focus: true;
                         Keys.onPressed: (event)=>{
                                             if(keyRow.isListening){
