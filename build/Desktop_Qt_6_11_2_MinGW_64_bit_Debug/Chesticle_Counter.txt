@@ -1,5 +1,0 @@
-2026-11-16 09:38:32 | Chesticle Grabbed = 88 | KeyBind = G | Qtk/wink = 71/71
-2026-11-16 10:55:32 | Chesticle Grabbed = 14 | KeyBind = G | Qtk/wink = 71/71
-2026-11-17 01:27:34 | Chesticle Grabbed = 13 | KeyBind = G | Qtk/wink = 71/71
-2026-11-17 02:57:46 | Chesticle Grabbed = 4 | KeyBind = G | Qtk/wink = 71/71
-2026-11-17 05:51:34 | Chesticle Grabbed = 17 | KeyBind = G | Qtk/wink = 71/71

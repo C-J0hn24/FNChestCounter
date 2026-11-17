@@ -1,6 +1,0 @@
-module FNChestCounter
-typeinfo appFNChestCounter.qmltypes
-prefer :/qt/qml/FNChestCounter/
-Main 254.0 Main.qml
-depends QtQuick
-

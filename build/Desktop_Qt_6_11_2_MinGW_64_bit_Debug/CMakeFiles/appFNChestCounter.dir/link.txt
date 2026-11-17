@@ -1,3 +1,0 @@
-F:\Qt_UI\Tools\CMake_64\bin\cmake.exe -E rm -f CMakeFiles\appFNChestCounter.dir/objects.a
-F:\Qt_UI\Tools\mingw1310_64\bin\ar.exe qc CMakeFiles\appFNChestCounter.dir/objects.a @CMakeFiles\appFNChestCounter.dir\objects1.rsp
-F:\Qt_UI\Tools\mingw1310_64\bin\g++.exe -g -mwindows -Wl,--whole-archive CMakeFiles\appFNChestCounter.dir/objects.a -Wl,--no-whole-archive -o appFNChestCounter.exe -Wl,--out-implib,libappFNChestCounter.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\appFNChestCounter.dir\linkLibs.rsp
