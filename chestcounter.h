@@ -21,6 +21,8 @@ class ChestCounter: public QObject
     Q_PROPERTY(int chest_count READ getChests NOTIFY c_opened)
     Q_PROPERTY(QString key_name READ getKeyName NOTIFY KeyBind_Changed)
     Q_PROPERTY(QString stroke_mode READ getChestStrokeMode NOTIFY chestStroke_Changed)
+    Q_PROPERTY(bool gameinFocus READ getGameFocus NOTIFY gameFocus_Changed)
+    Q_PROPERTY(bool chestAdded READ getChestAdded NOTIFY chestPulse_Changed)
 
 private:
     int chest_opened=0;
@@ -32,6 +34,7 @@ private:
     bool bigChestHeld=false;
     bool was_pressed=true;
     bool gameFocus=false;
+    bool chest_added=false;
 
     void checkKey();
 
@@ -41,18 +44,24 @@ private:
     QTimer *timer=new QTimer(this);
     QSettings *mem =new QSettings(QSettings::IniFormat,QSettings::UserScope,"FNChestCounter","ChesticleCounter",this);
 
-
 public:
     //fetch
     int getChests(){return chest_opened;}
     int getCurrentKey(){return cap_key;}
     void checkActiveWindow();
 
+    //chestadded pulse
+    bool getChestAdded()const{return chest_added;}
+
+    //active focused window
+    bool getGameFocus()const {return gameFocus;}
+
     //keybind state func
     QString getKeyName()const{
         return Qt_cap_key ? QKeySequence(Qt_cap_key).toString()
                           : QStringLiteral("Not Set");
     }
+
     //storkestate
     QString getChestStrokeMode()const{
         return chestStroke_mode ? QStringLiteral("Hold"):QStringLiteral("Rapid");
@@ -111,13 +120,15 @@ public:
 
     //chest strokeHold
     Q_INVOKABLE void chestStrokeState(){
-
+        //real deal toggle uwu
         chestStroke_mode=!chestStroke_mode;
         holdChest_Delay=chestStroke_mode ? 250 : 0;
 
         emit chestStroke_Changed();
     }
 
+    //reset chest pulse
+    Q_INVOKABLE void resetChestPulse(){chest_added=false; emit chestPulse_Changed();}
 
     //class counter constructor call
     explicit ChestCounter(QObject *parent = nullptr);
@@ -127,6 +138,8 @@ signals:
     void c_opened();
     void KeyBind_Changed();
     void chestStroke_Changed();
+    void gameFocus_Changed();
+    void chestPulse_Changed();
 };
 
 #endif // CHESTCOUNTER_H

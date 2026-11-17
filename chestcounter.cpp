@@ -57,6 +57,7 @@ ChestCounter::ChestCounter(QObject *parent): QObject(parent) {
 //focus whindow check fn for windows
 void ChestCounter::checkActiveWindow(){
 
+    bool oldGameFocus=gameFocus;
     gameFocus=false;
 
     //checks current focuswindow
@@ -88,6 +89,9 @@ void ChestCounter::checkActiveWindow(){
         else{gameFocus=false;}
     }
 
+    //qml updater on change
+    if(gameFocus!=oldGameFocus)emit gameFocus_Changed();
+
     //init timer
     if(gameFocus){was_pressed=true; timer->start();}
     else{timer->stop();}
@@ -113,7 +117,8 @@ void ChestCounter:: checkKey(){
             //if held for ms
             if(holonChest.elapsed()>=holdChest_Delay){
                 ++chest_opened;
-                emit c_opened();
+                chest_added=true;
+                emit c_opened(); emit chestPulse_Changed();
                 bigChestHeld=true;
             }
         }

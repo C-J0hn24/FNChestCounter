@@ -28,6 +28,7 @@ qt_add_qml_module(appFNChestCounter
     fonts/Comfortaa-Light.ttf
     fonts/Comfortaa-Bold.ttf
     fonts/DigitalNumbers-Regular.ttf
+    img/github.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

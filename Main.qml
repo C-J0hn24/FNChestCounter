@@ -52,14 +52,37 @@ ApplicationWindow {
 
         Behavior on scale {NumberAnimation{duration:350;easing.type:Easing.OutBack}}
 
-        background: Rectangle{radius: bgRad; border.width: 1;border.color: "#6D31C0"
+        background: Rectangle{radius: bgRad;
+
+            border.width: 1;
+            border.color: hovered ?"#94CBFF" : "#6D31C0";
 
             gradient: Gradient{
-                GradientStop{position:0.0; color:"#2F1135";}
-                GradientStop{position:0.25; color:"#180C22";}
-                GradientStop{position:0.50; color:"#0F0A1B";}
-                GradientStop{position:0.85; color:"#16112E";}
-                GradientStop{position:1.0; color:"#191538";}
+                GradientStop{position:0.0; color: hovered ?   "#274858" : "#2F1135";
+                    Behavior on color{
+                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.25; color: hovered ?  "#0C1422" : "#180C22" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.50; color: hovered ?  "#0A161B" : "#0F0A1B" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.85; color: hovered ? "#111F2E": "#16112E" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:1.0; color: hovered ?  "#152C38" : "#191538" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 350; easing.type:Easing.InOutCubic }
+                    }
+                }
             }
         }
     }
@@ -68,6 +91,16 @@ ApplicationWindow {
     Column{
         spacing: 20
         anchors.centerIn: parent
+
+        //reset chestflashing
+        Timer{id:chestPulse; interval:200; repeat: false
+                onTriggered: chest.resetChestPulse();
+        }
+        Connections{target: chest
+            function onChestPulse_Changed(){
+                if(chest.chestAdded){chestPulse.restart();}
+            }
+        }
 
         //top header
         Rectangle{id: rec1; width:210; height: 42; visible:true; radius: 15;
@@ -83,14 +116,38 @@ ApplicationWindow {
         //middle counter card
         Rectangle{id: rec2; width:375; height: 235; visible:true; radius: 20;
             border.width: 1;
-            border.color: "#6D31C0"
+            border.color: chest.chestAdded?"#94CBFF" : "#6D31C0";
+            Behavior on border.color{
+                ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+            }
+
             //bg
             gradient: Gradient{
-                GradientStop{position:0.0; color:"#2F1135";}
-                GradientStop{position:0.25; color:"#180C22";}
-                GradientStop{position:0.50; color:"#0F0A1B";}
-                GradientStop{position:0.85; color:"#16112E";}
-                GradientStop{position:1.0; color:"#191538";}
+                GradientStop{position:0.0; color: chest.chestAdded ?   "#274858" : "#2F1135";
+                    Behavior on color{
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.25; color: chest.chestAdded ?  "#0C1422" : "#180C22" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.50; color: chest.chestAdded ?  "#0A161B" : "#0F0A1B" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:0.85; color: chest.chestAdded ? "#111F2E": "#16112E" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+                    }
+                }
+                GradientStop{position:1; color: chest.chestAdded ?  "#274858" : "#191538" ;
+                    Behavior on color{
+                        ColorAnimation{duration: 200; easing.type:Easing.InOutCubic }
+                    }
+                }
             }
 
             //contents
@@ -122,17 +179,46 @@ ApplicationWindow {
                     anchors.horizontalCenter: parent.horizontalCenter
                     //est per hr WIP
                     Rectangle{id: rec2_3; width:200; height: 35; visible:true; radius:10;
-                        RegText{opacity: .75; font.family:fntL0.name; text:"Window FN"; font.bold:true; font.pixelSize: 14}
+                        RegText{opacity: chest.gameinFocus ? 1 : 0.75; font.family:fntL0.name; font.bold:false; font.pixelSize: 8
+                                color: chest.gameinFocus ? "#FFFFFF" : "#AAAAAA"
+                                text: chest.gameinFocus ? "Game in Focus || Counter Running":"Game out of Focus || Counter Stopped";
+
+                                Behavior on opacity{
+                                    NumberAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                        }
 
                         border.width: 1;
-                        border.color: "#6D31C0"
+                        border.color: chest.gameinFocus?"#94CBFF" : "#6D31C0";
+                        Behavior on border.color{
+                            ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                        }
 
                         gradient: Gradient{
                             orientation: Gradient.Horizontal
-                            GradientStop{position:0.0; color:"#3A174A";}
-                            GradientStop{position:0.10; color:"#190D21";}
-                            GradientStop{position:0.90; color:"#24102E";}
-                            GradientStop{position:1.0; color:"#371646";}
+                            GradientStop{position:0.0; color: chest.gameinFocus ?  "#173F4A" : "#3A174A";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
+                            GradientStop{position:0.10; color: chest.gameinFocus ? "#0D0F21" : "#190D21";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
+                            GradientStop{position:0.90; color: chest.gameinFocus ? "#101E2E" : "#24102E";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
+                            GradientStop{position:1.0; color: chest.gameinFocus ? "#162E46" : "#371646";
+                                Behavior on color{
+                                    ColorAnimation{duration: 300; easing.type:Easing.InOutCubic }
+                                }
+                            }
                         }
 
                     }
@@ -234,6 +320,39 @@ ApplicationWindow {
             }
 
 
+        }
+
+        //bottom header
+        Rectangle{id: rec4; width:170; height: 20; visible:true; radius: 15;
+            anchors.horizontalCenter: parent.horizontalCenter
+            border.width: 1;
+            border.color: "#6D31C0"
+            color: "#0F0A1B"
+
+            Row{
+                anchors.centerIn: parent
+                spacing:4
+
+                //txt
+                Text{text: "Chesticle By C-J0hn24"; font.family: fntL0.name; font.pixelSize: 10
+                    color: "#FFFFFF"; opacity: .5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                Rectangle{
+                    border.width: 1;
+                    border.color: "#A118D8"
+                    width: 12; height: 12; radius: 15
+                    color: "#A118D8"; opacity: .5
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    Image{
+                        anchors.centerIn: parent
+                        width: 15; height: 15
+                        fillMode: Image.PreserveAspectFit
+                        source: "img/github.png"
+                    }
+                }
+            }
         }
     }
 }
