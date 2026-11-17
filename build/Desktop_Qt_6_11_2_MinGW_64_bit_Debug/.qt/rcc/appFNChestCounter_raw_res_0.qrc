@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/qt/qml/FNChestCounter/">
+    <file alias="fonts/Comfortaa-Light.ttf">F:/Wspace/QT/FNChestCounter/fonts/Comfortaa-Light.ttf</file>
+    <file alias="fonts/Comfortaa-Bold.ttf">F:/Wspace/QT/FNChestCounter/fonts/Comfortaa-Bold.ttf</file>
+    <file alias="fonts/DigitalNumbers-Regular.ttf">F:/Wspace/QT/FNChestCounter/fonts/DigitalNumbers-Regular.ttf</file>
+  </qresource>
+</RCC>
+

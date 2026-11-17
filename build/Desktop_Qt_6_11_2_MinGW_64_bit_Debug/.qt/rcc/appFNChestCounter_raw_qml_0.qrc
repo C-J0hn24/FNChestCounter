@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/FNChestCounter/">
+    <file alias="Main.qml">F:/Wspace/QT/FNChestCounter/Main.qml</file>
+  </qresource>
+</RCC>
+

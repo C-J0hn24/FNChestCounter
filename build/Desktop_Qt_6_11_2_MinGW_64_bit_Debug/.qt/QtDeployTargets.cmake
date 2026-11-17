@@ -1,0 +1,3 @@
+set(__QT_DEPLOY_TARGET_appFNChestCounter_FILE F:/Wspace/QT/FNChestCounter/build/Desktop_Qt_6_11_2_MinGW_64_bit_Debug/appFNChestCounter.exe)
+set(__QT_DEPLOY_TARGET_appFNChestCounter_TYPE EXECUTABLE)
+set(__QT_DEPLOY_TARGET_appFNChestCounter_RUNTIME_DLLS F:/Qt_UI/6.11.2/mingw_64/bin/Qt6Quick.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6OpenGL.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6Gui.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6QmlMeta.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6QmlModels.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6QmlWorkerScript.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6Qml.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6Network.dll;F:/Qt_UI/6.11.2/mingw_64/bin/Qt6Core.dll)
