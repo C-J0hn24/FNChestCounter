@@ -15,6 +15,7 @@ endif()
 
 qt_add_executable(appFNChestCounter
     main.cpp
+    appicon.rc
 )
 
 qt_add_qml_module(appFNChestCounter
@@ -29,6 +30,7 @@ qt_add_qml_module(appFNChestCounter
     fonts/Comfortaa-Bold.ttf
     fonts/DigitalNumbers-Regular.ttf
     img/github.png
+    img/icon.ico
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
