@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(FNChestCounter VERSION 0.1 LANGUAGES CXX)
+project(FNChestCounter VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Widgets)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -45,7 +45,7 @@ set_target_properties(appFNChestCounter PROPERTIES
 )
 
 target_link_libraries(appFNChestCounter
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Widgets
 )
 
 install(TARGETS appFNChestCounter

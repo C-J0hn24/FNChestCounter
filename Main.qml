@@ -13,6 +13,8 @@ ApplicationWindow {
     maximumHeight: 515
     visible: true
     title: qsTr("Chesticle Counter")
+    //minimize to tray
+    onVisibilityChanged: (visibility)=>{if(visibility===Window.Minimized) window.hide()}
 
     //cppstuff
     ChestCounter{id:chest}
@@ -184,7 +186,7 @@ ApplicationWindow {
                     Rectangle{id: rec2_3; width:200; height: 35; visible:true; radius:10;
                         RegText{opacity: chest.gameinFocus ? 1 : 0.75; font.family:fntL0.name; font.bold:false; font.pixelSize: 8
                                 color: chest.gameinFocus ? "#FFFFFF" : "#AAAAAA"
-                                text: chest.gameinFocus ? "Game in Focus || Counter Running":"Game out of Focus || Counter Stopped";
+                                text: chest.gameinFocus ? chest.getActiveGameName+" in Focus || Counter Running":"Game out of Focus || Counter Stopped";
 
                                 Behavior on opacity{
                                     NumberAnimation{duration: 300; easing.type:Easing.InOutCubic }

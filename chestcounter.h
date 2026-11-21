@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QKeySequence>
 #include <QElapsedTimer>
+#include <QHash>
 
 class ChestCounter: public QObject
 {
@@ -19,9 +20,12 @@ class ChestCounter: public QObject
 
     //var expose for qml
     Q_PROPERTY(int chest_count READ getChests NOTIFY c_opened)
+
     Q_PROPERTY(QString key_name READ getKeyName NOTIFY KeyBind_Changed)
     Q_PROPERTY(QString stroke_mode READ getChestStrokeMode NOTIFY chestStroke_Changed)
-    Q_PROPERTY(bool gameinFocus READ getGameFocus NOTIFY gameFocus_Changed)
+    Q_PROPERTY(QString getActiveGameName READ getActiveGameOnFocus NOTIFY gameFocus_Changed)
+
+    Q_PROPERTY(bool gameinFocus READ getGameFocusStatus NOTIFY gameFocus_Changed)
     Q_PROPERTY(bool chestAdded READ getChestAdded NOTIFY chestPulse_Changed)
 
 private:
@@ -31,14 +35,15 @@ private:
     int chestStroke_mode=1;
     int holdChest_Delay=250;//ms
 
+    QString activeGame;
+
     bool bigChestHeld=false;
     bool was_pressed=true;
-    bool gameFocus=false;
     bool chest_added=false;
 
     void checkKey();
 
-    std::wstring target_win=L"FortniteClient-Win64-Shipping.exe";
+    QHash<QString,QString> const target_win={{"fortniteclient-win64-shipping.exe","Fortnite"},{"geforcenow.exe","GFN"}};
 
     QElapsedTimer holonChest;
     QTimer *timer=new QTimer(this);
@@ -52,9 +57,9 @@ public:
 
     //chestadded pulse
     bool getChestAdded()const{return chest_added;}
+    bool getGameFocusStatus()const {return !activeGame.isEmpty();}
 
-    //active focused window
-    bool getGameFocus()const {return gameFocus;}
+    QString getActiveGameOnFocus(){return activeGame;}//game platform name
 
     //keybind state func
     QString getKeyName()const{
@@ -93,6 +98,11 @@ public:
         //stroking status
         was_pressed = true;
 
+        //save to drive
+        mem->setValue("Active_KeyBind",cap_key);
+        mem->setValue("Qt_Key",Qt_cap_key);
+        mem->sync();
+
         //update ui
         emit KeyBind_Changed();
     };
@@ -102,13 +112,13 @@ public:
         //log onreset
         if(chest_opened!=0){
             QFile file{"Chesticle_Counter.txt"};
-            if(!file.open(QIODevice::Append | QIODevice::Text))
-                return;
-            QTextStream out(&file);
-            out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")
-                << " | Chesticle Grabbed = "<<chest_opened<<" | KeyBind = "<<getKeyName()
-                <<" | Qtk/wink = "<<Qt_cap_key<<"/"<<cap_key<<"\n";
-            file.close();
+            if(file.open(QIODevice::Append | QIODevice::Text)){
+                QTextStream out(&file);
+                out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")
+                    << " | Chesticle Grabbed = "<<chest_opened<<" | KeyBind = "<<getKeyName()
+                    <<" | Qtk/wink = "<<Qt_cap_key<<"/"<<cap_key<<"\n";
+                file.close();
+            }
         };
 
         //update counter
@@ -123,6 +133,10 @@ public:
         //real deal toggle uwu
         chestStroke_mode=!chestStroke_mode;
         holdChest_Delay=chestStroke_mode ? 250 : 0;
+
+        //saveto disk
+        mem->setValue("Stroke_Mode", chestStroke_mode);
+        mem->sync();
 
         emit chestStroke_Changed();
     }

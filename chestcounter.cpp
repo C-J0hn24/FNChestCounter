@@ -14,8 +14,11 @@ VOID CALLBACK WinEventProcCallback(
     }
 }
 
-//trig once
+//trig once main entry
 ChestCounter::ChestCounter(QObject *parent): QObject(parent) {
+
+    //address
+    g_bigChest_inst=this;
 
     //checks active win on first boot
     checkActiveWindow();
@@ -25,11 +28,8 @@ ChestCounter::ChestCounter(QObject *parent): QObject(parent) {
     connect(timer,&QTimer::timeout,this, &ChestCounter::checkKey);//procks checkkey every 100ms
 
     //init timer
-    if(gameFocus){was_pressed=true; timer->start();}
+    if(!activeGame.isEmpty()){was_pressed=true; timer->start();}
     else{timer->stop();}
-
-    //address
-    g_bigChest_inst=this;
 
     //focused win via eventhook
     SetWinEventHook(
@@ -37,12 +37,13 @@ ChestCounter::ChestCounter(QObject *parent): QObject(parent) {
         NULL,WinEventProcCallback,0,0,WINEVENT_OUTOFCONTEXT
         );
 
-    //save 2 mem on close
+    //save to mem on close
     connect(qApp,&QCoreApplication::aboutToQuit,this,[this](){
         mem->setValue("Big_Chests_Grabbed_Without_Consent",chest_opened);
         mem->setValue("Active_KeyBind",cap_key);
         mem->setValue("Stroke_Mode", chestStroke_mode);
         mem->setValue("Qt_Key",Qt_cap_key);
+        mem->sync();
     });
 
     //for next boot load BigChest Vals n key
@@ -57,53 +58,54 @@ ChestCounter::ChestCounter(QObject *parent): QObject(parent) {
 //focus whindow check fn for windows
 void ChestCounter::checkActiveWindow(){
 
-    bool oldGameFocus=gameFocus;
-    gameFocus=false;
+    QString oldGameFocus=activeGame;
+    activeGame.clear();
 
     //checks current focuswindow
     HWND active_win=GetForegroundWindow();
-    if(!active_win){timer->stop();return;}
 
-    //gets current focused window's PID n save it;
-    DWORD active_winpid=0;
-    GetWindowThreadProcessId(active_win,&active_winpid);
+    if(active_win){
+        //gets current focused window's PID n save it;
+        DWORD active_winpid=0;
+        GetWindowThreadProcessId(active_win,&active_winpid);
 
-    //politecat way to ask for proc path uwu
-    HANDLE hProcess =OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION,FALSE,active_winpid);
-    if(!hProcess)return;
+        //politecat way to ask for proc path uwu
+        HANDLE hProcess =OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION,FALSE,active_winpid);
 
-    //read path of activefocus proc
-    wchar_t buffer[MAX_PATH]; //path
-    DWORD size = MAX_PATH;//wordcount in path
+        if(hProcess){
+            //read path of activefocus proc
+            wchar_t buffer[MAX_PATH]; //path
+            DWORD size = MAX_PATH;//wordcount in path
 
-    //comparision active_proc to target
-    if(QueryFullProcessImageNameW(hProcess,0,buffer,&size)){
-        //cpp conversion
-        std::wstring full_path(buffer);
-        size_t last_slash=full_path.find_last_of(L"\\");//grabs last slice of path
-        //chopchop unwantedpath aside from last exe_str
-        std::wstring exe_name=full_path.substr(last_slash+1);
+            //comparision active_proc to target
+            if(QueryFullProcessImageNameW(hProcess,0,buffer,&size)){
+                //cpp conversion
+                std::wstring full_path(buffer);
+                size_t last_slash=full_path.find_last_of(L"\\");//grabs last slice of path
+                //chopchop unwantedpath aside from last exe_str
+                std::wstring exe_name=full_path.substr(last_slash+1);
 
-        //mainthing
-        if(exe_name==target_win){gameFocus=true;}
-        else{gameFocus=false;}
+                //mainthing checks current exe
+                activeGame=target_win.value(QString::fromStdWString(exe_name).toLower());
+            }
+
+            //close on done
+            CloseHandle(hProcess);
+        }
     }
 
     //qml updater on change
-    if(gameFocus!=oldGameFocus)emit gameFocus_Changed();
+    if(activeGame!=oldGameFocus)emit gameFocus_Changed();
 
     //init timer
-    if(gameFocus){was_pressed=true; timer->start();}
+    if(!activeGame.isEmpty()){was_pressed=true; timer->start();}
     else{timer->stop();}
-
-    //close on done
-    CloseHandle(hProcess);
 }
 
 void ChestCounter:: checkKey(){
 
     //counts only on fn
-    if(gameFocus){
+    if(!activeGame.isEmpty()){
         //do nun if key is set
         if(cap_key==0)return;
         //key pressed
@@ -120,6 +122,9 @@ void ChestCounter:: checkKey(){
                 chest_added=true;
                 emit c_opened(); emit chestPulse_Changed();
                 bigChestHeld=true;
+
+                mem->setValue("Big_Chests_Grabbed_Without_Consent",chest_opened);
+                mem->sync();
             }
         }
         if(!is_pressed){holonChest.invalidate();}

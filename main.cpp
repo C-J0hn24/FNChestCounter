@@ -1,15 +1,19 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QWindow>
 #include <windows.h>
+#include <QMenu>
+#include <QIcon>
+#include <QSystemTrayIcon>
+#include <chestcounter.h>
 
 static const QString inst_Key=QStringLiteral("FNChestCounter_CJ0hn24");
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     //instance check
     QLocalSocket probe;
@@ -47,8 +51,41 @@ int main(int argc, char *argv[])
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
                      &app, []() { QCoreApplication::exit(-1); },
                      Qt::QueuedConnection);
-
     engine.loadFromModule("FNChestCounter", "Main");
 
-    return QGuiApplication::exec();
+    //minimise to tray
+    QWindow *win= qobject_cast<QWindow*>(engine.rootObjects().value(0));
+    ChestCounter *chest =win ? win->findChild<ChestCounter*>():nullptr;
+    auto raise =[win]{if(win){win->showNormal();win->raise();win->requestActivate();}};
+    //menu options
+    QMenu menu;
+    QAction *showAct = menu.addAction("Show Counter");
+    QAction *quitAct = menu.addAction("Exit");
+
+    //load icon
+    QSystemTrayIcon tray;
+    QIcon icon(":/qt/qml/FNChestCounter/img/icon.ico");
+    if(icon.isNull()) icon= app.windowIcon();
+
+    //assign prpertys to tray
+    tray.setIcon(icon);
+    //display counter in tray when hovered
+    if(chest){
+        auto tip=[&tray,chest]{tray.setToolTip("Chest Opened: "+QString::number(chest->getChests()));};
+        tip();
+        QObject::connect(chest, &ChestCounter::c_opened,tip);
+    }
+    tray.setContextMenu(&menu);
+    tray.show();
+
+    //actions on trigg
+    QObject::connect(showAct,&QAction::triggered,raise);
+    QObject::connect(quitAct,&QAction::triggered,&app,&QApplication::quit);
+    QObject::connect(&tray,&QSystemTrayIcon::activated,[raise,win](QSystemTrayIcon::ActivationReason r){
+        if(r==QSystemTrayIcon::Trigger){
+            if(win&&win->isVisible())win->hide();else raise();
+        }
+    });
+
+    return QApplication::exec();
 }
